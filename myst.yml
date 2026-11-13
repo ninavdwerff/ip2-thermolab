@@ -2,14 +2,14 @@
 version: 1
 project:
   id: d4ed63d4-e4ba-4d57-b9c3-8f8af2dac267
-  title: Python Thermodynamica Simulaties voor TN13015
+  title: Python Thermodynamica Simulaties voor TN13015 door Nina en Benji
   # description:
   # keywords: []
   authors: 
     - name: Benji Wilkens
     - name: Nina van der Werff
 
-  github: https://github.com/Contemporary-Physicslab/thermolab
+  github: https://github.com/Contemporary-Physicslab/thermolab-ip2benji
   plugins:
     - https://github.com/jupyter-book/myst-plugins/releases/download/page-last-updatedv1.1/page-last-updated.mjs
   toc:
