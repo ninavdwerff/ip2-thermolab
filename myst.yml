@@ -6,8 +6,8 @@ project:
   # description:
   # keywords: []
   authors: 
-    - name: Freek Pols
-    - name: Roel Smit
+    - name: Benji Wilkens
+    - name: Nina van der Werff
 
   github: https://github.com/Contemporary-Physicslab/thermolab
   plugins:
