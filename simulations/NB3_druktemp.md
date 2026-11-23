@@ -540,7 +540,7 @@ Geef hier de relatie tussen de constanten...
 Om het in 3-d te doen moet je een paar dingen aanpassen. l in de eerst gegeven formule veranderd in l^2 aangezien de deeltjes nu botsen op een oppervlak in plaats van een lijn. Daaruit komt A in 2-d wordt V in 3-d. Verder geld nog steeds dat de richting van de snelheid niet uitmaakt, maar nu moeten we wel meenemen dat er een z richting bestaat voor de snelheid. Daarom wordt wat eerst <v^2>/2 was nu <v^2>/3. 
 In deze formule kan je de formule voor de kinetische energie herkennen. Hierdoor kan je hem omschrijven naar PV = (2/3)*N*E_kin.
 Voor de ideale gaswet geld PV = N*k_b*T. Als je deze twee formules nu in elkaar subsitueert krijg je (2/3)*N*E_kin = N*k_b*T.
-Omgeschreven krijg je dan 
+Omgeschreven krijg je dan E_kin = (3/2)*K_b*T in drie dimenties. Dit is dezelfde formule die we aan het begin van de opdracht hadden gekregen om de temperatuur van het model te berekenen. 
 ```
 
 
