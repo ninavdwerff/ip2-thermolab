@@ -223,7 +223,9 @@ Schrijf een functie die de temperatuur van het gas in onze simulatie bepaalt:
 ```python tags=["NB3_tempfun"]
 def temperature(particles) -> float:
     temp = 0.0 
-    ### YOUR CODE HERE ###
+    energy = [p.kin_energy for p in particles]
+    kinenergy = np.mean(energy)
+    temp = kinenergy*1/(1.380649*1e-23)
     return temp
 ```
 
@@ -241,18 +243,19 @@ Gebruik deze functie om een simulatie te maken waarin je de temperatuur als func
 particles = []
 temperatures = np.zeros(100, dtype=float)
 times = np.linspace(1, 100, 100)
-
+temp = []
 create_particles(particles)
+x = []
 for i in range(100):
     take_time_step(particles)
-    # vastleggen van temperatuur per tijdstap
+    x.append(DT*i)
+    temp.append(temperature(particles))
     ### YOUR CODE HERE ###
 
 plt.figure()
-plt.xlabel('Time')
-plt.ylabel('Temperature')
-# plotten van tijd tegen temperatuur
-### YOUR CODE HERE ###
+plt.xlabel('Time [s]')
+plt.ylabel('Temperature [K]')
+plt.plot(x,temp, 'k-') 
 plt.show()
 ```
 
@@ -344,10 +347,14 @@ Wat zou je als verklaring hiervoor geven?
 
 ```python tags=["NB3_plot_pres"]
 particles = []
+create_particles(particles)
 pressures = np.zeros(100, dtype=float)
 times = np.linspace(1, 100, 100)
 
-### YOUR CODE HERE ###
+for i in range(100):
+    take_time_step(particles)
+    pressures[i] = pressure
+    
 
 plt.figure()
 plt.xlabel('Time [step]')
@@ -356,7 +363,7 @@ plt.ylabel('Pressure [a.u.]')
 plt.plot(times, pressures, '-r')
 
 plt.show()
-
+print("de grafiek heeft geen vlakke vorm want er s alleen druk als een deeltje de rand van de box raakt. soms is dat een deeltje, soms meerdere maar ook soms nul. Dit verschilt per tijdsstap en dus schommelt de grafiek ook per tijdsstap")
 ```
 
 <!-- #region tags=[] -->
@@ -376,8 +383,28 @@ Zet je initiële waarden weer terug.
 <!-- #endregion -->
 
 ```python tags=[]
-### YOUR CODE HERE ###
+BOX_SIZE_0 = 10                # Hoogte en lengte startvolume
+N = 400                         # Aantal deeltjes
+V_0 = 1                        # Startsnelheid van deeltjes
+RADIUS = 0.03                   # Straal van moleculen
+DT = 0.1 * RADIUS / V_0        # Tijdstap om geen botsing te missen
+particles = []
+create_particles(particles)
+pressures = np.zeros(100, dtype=float)
+times = np.linspace(1, 100, 100)
 
+for i in range(100):
+    take_time_step(particles)
+    pressures[i] = pressure
+    
+
+plt.figure()
+plt.xlabel('Time [step]')
+plt.ylabel('Pressure [a.u.]')
+
+plt.plot(times, pressures, '-r')
+
+plt.show()
 ```
 
 Een goedkoper alternatief bestaat uit het middelen van de druk over de tijd.
@@ -418,15 +445,26 @@ Kopieer nu je code voor de simulatie waarin je de druk als functie van de tijd h
 
 ```python
 particles = []
-N_steps = 500 
+N_steps = 2000 
 pressures = np.zeros(N_steps, dtype=float)
 
 times = np.linspace(1, N_steps, N_steps)
 
 create_particles(particles)
 
-### YOUR CODE HERE ###
+for i in range(2000):
+    take_time_step(particles)
+    pressures[i] = pressure
+    
 
+plt.figure()
+plt.xlabel('Time [step]')
+plt.ylabel('Pressure [a.u.]')
+
+plt.plot(times, pressures, '-r')
+
+plt.show()
+print(np.mean(pressures))
 ```
 
 Met de middeling kun je beter zien wat de gemiddelde waarde voor de druk in dit systeem is. Als dit voor jouw simulatie lastig is kan je de factor `alpha` aanpassen in de functie 'handle_walls`, zodat je over een langere periode het gemiddelde neemt. Hou daarbij wel rekening met de eis in [bovenstaande formule](int_norm)
@@ -437,7 +475,7 @@ We kunnen de gevonden druk nu wel uitdrukken in SI-eenheden met behulp van de vo
 ```
 
 ```{solution} ex-druktemp-7
-### YOUR CODE HERE ###
+Alle waardes die we hebben gebruikt zijn bedacht en nergens op gebazeert. Het zijn veertig deeltjes in een van 10 bij 10 met een gewicht van 1. Deze waardes slaan zijn niet gepresentabel voor deeltjes in een fietsband. Ook is dit een tweedimentionele simulatie van een driedimentionale situatie. Daarom vinden we ook niet de 10 Bar die in een fietsband zit. 
 ```
 
 
@@ -449,7 +487,7 @@ Leg op basis van de vormen die je ziet en de bijbehorende wiskunde uit dat dit e
 ```
 
 ```{solution} ex-druktemp-8
-### YOUR CODE HERE ###
+De formule berekent een soort gemiddelde van de druk van de vorige aantal tijdstappen. Met iedere nieuwe meting schuift dit gemiddelde op naar de nieuwe meting. Hierdoor dus het stukje voortschrijdend. Het exponentiele gedeelte komt van k die exponentieel bepaald hoeveel de oude metingen meetellen aan het nieuwe gemiddelde.
 ```
 
 
@@ -480,6 +518,12 @@ Controleer of je uitkomst overeenkomt met de theorie en verifieer hiermee de cod
 
 ```python
 ### YOUR CODE HERE ###
+particles = []
+create_particles(particles)
+kinenergy = [p.kin_energy/BOX_SIZE_0**2 for p in particles]
+pressure_calculated = np.sum(kinenergy)
+print(pressure_calculated)
+print("in het model komt mijn gemiddelde op ongeveer 0.26 uit. Dit is dus wel al in dezelfde oordegrootte")
 ```
 
 In [de formule voor de tweedimensionale druk](2d_pressure) kan je de structuur van de ideale gaswet herkennen. 
@@ -493,7 +537,10 @@ Herleid dezelfde formule af voor het driedimensionale geval. Laat zien welke rel
 
 ```{solution} ex-druktemp9b
 Geef hier de relatie tussen de constanten...
-### YOUR CODE HERE ###
+Om het in 3-d te doen moet je een paar dingen aanpassen. l in de eerst gegeven formule veranderd in l^2 aangezien de deeltjes nu botsen op een oppervlak in plaats van een lijn. Daaruit komt A in 2-d wordt V in 3-d. Verder geld nog steeds dat de richting van de snelheid niet uitmaakt, maar nu moeten we wel meenemen dat er een z richting bestaat voor de snelheid. Daarom wordt wat eerst <v^2>/2 was nu <v^2>/3. 
+In deze formule kan je de formule voor de kinetische energie herkennen. Hierdoor kan je hem omschrijven naar PV = (2/3)*N*E_kin.
+Voor de ideale gaswet geld PV = N*k_b*T. Als je deze twee formules nu in elkaar subsitueert krijg je (2/3)*N*E_kin = N*k_b*T.
+Omgeschreven krijg je dan 
 ```
 
 
